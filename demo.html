@@ -1,0 +1,195 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Values System - Live Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', monospace; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%); color: #00ff00; padding: 20px; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 2.5rem; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 40px; }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: rgba(26, 26, 26, 0.9); border: 1px solid #00ff00; border-radius: 15px; padding: 25px; text-align: center; transition: transform 0.3s, box-shadow 0.3s; backdrop-filter: blur(10px); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,255,0,0.2); }
+        .card-title { font-size: 1.2rem; margin-bottom: 15px; color: #fff; }
+        .value { font-size: 2.5rem; font-weight: bold; margin: 20px 0; }
+        .unit { font-size: 0.9rem; color: #888; }
+        .status { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #00ff00; margin-right: 8px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        button { background: #00ff00; color: #0a0a0a; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-weight: bold; margin: 30px auto; display: block; font-size: 1rem; transition: all 0.3s; }
+        button:hover { background: #00cc00; transform: scale(1.05); }
+        .footer { text-align: center; margin-top: 50px; color: #666; font-size: 0.8rem; }
+        .badge { display: inline-block; background: #00ff00; color: #0a0a0a; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; margin-left: 10px; }
+        @media (max-width: 768px) { .dashboard { grid-template-columns: 1fr; } .value { font-size: 1.8rem; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🚀 Dynamic Values System <span class="badge">LIVE DEMO</span></h1>
+    <div class="subtitle">Enterprise-grade real-time dynamic values platform</div>
+
+    <div class="dashboard" id="dashboard"></div>
+
+    <button onclick="refreshData()">🔄 Refresh All Values</button>
+
+    <div class="footer">
+        <p>⚡ Real-time updates every 2 seconds | 🔒 Military-grade security | 📊 Live metrics</p>
+        <p style="margin-top: 10px;">⚠️ This is a live simulation demo | Backend API: PHP 8.4 + Redis Cluster</p>
+    </div>
+</div>
+
+<script>
+    // Simulated data sources (replicando el comportamiento real)
+    class DynamicValueSimulator {
+        constructor() {
+            this.values = {
+                random: 0,
+                temperature: 0,
+                humidity: 0,
+                active_users: 0,
+                cpu_usage: 0,
+                requests_per_second: 0
+            };
+            this.history = {};
+        }
+
+        generateRandom() {
+            return Math.floor(Math.random() * 100) + 1;
+        }
+
+        generateTemperature() {
+            return (15 + Math.random() * 20).toFixed(1);
+        }
+
+        generateHumidity() {
+            return Math.floor(30 + Math.random() * 60);
+        }
+
+        generateActiveUsers() {
+            return Math.floor(500 + Math.random() * 500);
+        }
+
+        generateCPUUsage() {
+            return Math.floor(20 + Math.random() * 60);
+        }
+
+        generateRPS() {
+            return Math.floor(100 + Math.random() * 400);
+        }
+
+        updateAll() {
+            this.values.random = this.generateRandom();
+            this.values.temperature = this.generateTemperature();
+            this.values.humidity = this.generateHumidity();
+            this.values.active_users = this.generateActiveUsers();
+            this.values.cpu_usage = this.generateCPUUsage();
+            this.values.requests_per_second = this.generateRPS();
+
+            // Guardar historial
+            const now = Date.now();
+            for (let [key, value] of Object.entries(this.values)) {
+                if (!this.history[key]) this.history[key] = [];
+                this.history[key].push({ time: now, value: value });
+                if (this.history[key].length > 20) this.history[key].shift();
+            }
+
+            return this.values;
+        }
+
+        getTrend(key) {
+            if (!this.history[key] || this.history[key].length < 2) return 0;
+            const oldVal = this.history[key][0].value;
+            const newVal = this.history[key][this.history[key].length - 1].value;
+            const trend = ((newVal - oldVal) / oldVal * 100).toFixed(1);
+            return trend;
+        }
+    }
+
+    const simulator = new DynamicValueSimulator();
+    let updateInterval;
+
+    function formatValue(key, value) {
+        switch(key) {
+            case 'temperature': return value + ' <span class="unit">°C</span>';
+            case 'humidity': return value + ' <span class="unit">%</span>';
+            case 'cpu_usage': return value + ' <span class="unit">%</span>';
+            case 'requests_per_second': return value.toLocaleString() + ' <span class="unit">req/s</span>';
+            case 'active_users': return value.toLocaleString() + ' <span class="unit">users</span>';
+            default: return value.toString();
+        }
+    }
+
+    function getIcon(key) {
+        const icons = {
+            random: '🎲',
+            temperature: '🌡️',
+            humidity: '💧',
+            active_users: '👥',
+            cpu_usage: '⚙️',
+            requests_per_second: '📊'
+        };
+        return icons[key] || '📈';
+    }
+
+    function getTrendIcon(trend) {
+        if (trend > 0) return '📈 +' + trend + '%';
+        if (trend < 0) return '📉 ' + trend + '%';
+        return '➡️ 0%';
+    }
+
+    function getTrendColor(trend) {
+        if (trend > 0) return '#00ff00';
+        if (trend < 0) return '#ff4444';
+        return '#888888';
+    }
+
+    function renderDashboard() {
+        const data = simulator.updateAll();
+        const dashboard = document.getElementById('dashboard');
+
+        let html = '';
+        for (const [key, value] of Object.entries(data)) {
+            const trend = simulator.getTrend(key);
+            html += `
+                <div class="card">
+                    <div class="card-title">
+                        ${getIcon(key)} ${key.replace(/_/g, ' ').toUpperCase()}
+                    </div>
+                    <div class="value">
+                        ${formatValue(key, value)}
+                    </div>
+                    <div class="trend" style="color: ${getTrendColor(trend)}; font-size: 0.8rem;">
+                        ${getTrendIcon(trend)}
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.7rem; color: #666;">
+                        <span class="status"></span> LIVE
+                    </div>
+                </div>
+            `;
+        }
+        dashboard.innerHTML = html;
+    }
+
+    function refreshData() {
+        renderDashboard();
+        // Feedback visual
+        const btn = event?.target;
+        if (btn) {
+            btn.textContent = '✓ Refreshed!';
+            setTimeout(() => { btn.textContent = '🔄 Refresh All Values'; }, 1500);
+        }
+    }
+
+    // Iniciar demo
+    renderDashboard();
+    updateInterval = setInterval(renderDashboard, 2000);
+
+    // Limpiar intervalo al salir (por si acaso)
+    window.addEventListener('beforeunload', () => {
+        if (updateInterval) clearInterval(updateInterval);
+    });
+</script>
+</body>
+</html>
