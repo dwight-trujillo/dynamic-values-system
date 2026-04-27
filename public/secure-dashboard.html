@@ -15,7 +15,6 @@
             align-items: center;
         }
         
-        /* Login Container */
         .login-container {
             background: rgba(26, 26, 46, 0.95);
             border: 2px solid #00ff00;
@@ -23,7 +22,6 @@
             padding: 40px;
             width: 400px;
             text-align: center;
-            backdrop-filter: blur(10px);
         }
         
         .login-container h1 {
@@ -70,7 +68,6 @@
             display: none;
         }
         
-        /* Dashboard (hidden initially) */
         .dashboard-container {
             display: none;
             width: 100%;
@@ -143,7 +140,6 @@
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
     <div id="loginScreen" class="login-container">
         <h1>🔐 Secure Access</h1>
         <form onsubmit="authenticate(event)">
@@ -158,9 +154,9 @@
             <button type="submit">Login</button>
             <div id="loginError" class="error">Invalid credentials</div>
         </form>
+        <div style="margin-top:20px; font-size:0.7rem; color:#666;">Demo: admin / admin123</div>
     </div>
 
-    <!-- Dashboard (hidden) -->
     <div id="dashboard" class="dashboard-container">
         <button class="logout-btn" onclick="logout()">🚪 Logout</button>
         
@@ -180,7 +176,6 @@
     </div>
 
     <script>
-        // Valid credentials (in real app, this would be server-side)
         const VALID_CREDENTIALS = {
             admin: 'admin123',
             user: 'user123',
@@ -230,16 +225,13 @@
 
         function updateDashboard() {
             const data = generateData();
-            
             document.getElementById('active-users').textContent = data.users.toLocaleString();
             document.getElementById('rps').textContent = data.rps.toLocaleString();
-            
             document.getElementById('dashboard-grid').innerHTML = `
                 <div class="card"><div>🎲 Random</div><div class="value">${data.random}</div></div>
                 <div class="card"><div>🌡️ Temperature</div><div class="value">${data.temperature}°C</div></div>
                 <div class="card"><div>💧 Humidity</div><div class="value">${data.humidity}%</div></div>
             `;
-            
             document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
         }
 
