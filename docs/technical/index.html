@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html>
+<head><title>Dynamic Values System - Technical Documentation</title></head>
+<body>
+<h1>Dynamic Values System - Technical Documentation v4.0</h1>
+
+<h2>Architecture Overview</h2>
+<p>The system implements a hexagonal architecture (Ports &amp; Adapters pattern) for maximum flexibility and testability.</p>
+
+<h2>Core Components</h2>
+<ul>
+<li><strong>ValueManager</strong> - Central orchestrator for all dynamic values</li>
+<li><strong>CacheInterface</strong> - Redis cluster implementation with automatic failover</li>
+<li><strong>DataSources</strong> - Pluggable data sources (Random, Database, API, WebSocket)</li>
+<li><strong>Security Layer</strong> - WAF, Rate Limiting, Input Validation</li>
+</ul>
+
+<h2>API Endpoints</h2>
+<ul>
+<li>GET /api.php - Returns all dynamic values</li>
+<li>GET /api.php?key={key} - Returns a specific value by key</li>
+<li>GET /health.php - Health check endpoint</li>
+</ul>
+
+<h2>Security Features</h2>
+<ul>
+<li>WAF with OWASP Core Rule Set</li>
+<li>Rate limiting: 100 requests per minute per IP</li>
+<li>Input validation and XSS sanitization</li>
+<li>Security headers (CSP, HSTS, X-Frame-Options)</li>
+</ul>
+
+<h2>Deployment</h2>
+<pre>
+docker-compose up -d
+curl http://localhost:8080/api.php
+</pre>
+</body>
+</html>
