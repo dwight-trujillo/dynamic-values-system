@@ -1,0 +1,39 @@
+﻿{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Dynamic Values API",
+    "version": "4.0.0",
+    "description": "Enterprise-grade real-time dynamic values API"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development"
+    }
+  ],
+  "paths": {
+    "/api.php": {
+      "get": {
+        "summary": "Get dynamic values",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Specific key to retrieve"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Successful response" },
+          "429": { "description": "Rate limit exceeded" }
+        }
+      }
+    },
+    "/health.php": {
+      "get": {
+        "summary": "Health check",
+        "responses": { "200": { "description": "System healthy" } }
+      }
+    }
+  }
+}
