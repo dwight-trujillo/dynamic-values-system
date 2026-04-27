@@ -1,0 +1,6 @@
+/vendor/
+.env
+/logs/
+/cache/
+.DS_Store
+.idea/

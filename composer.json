@@ -1,0 +1,14 @@
+{
+    "name": "dynamic-values/system",
+    "require": {
+        "php": ">=8.4.0",
+        "ext-json": "*",
+        "ext-redis": "*",
+        "monolog/monolog": "^3.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "DynamicValues\\": "src/"
+        }
+    }
+}
